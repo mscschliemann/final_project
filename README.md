@@ -1,8 +1,8 @@
 # final_project
 Graduation Project - Data Science Bootcamp Berlin, 2020
 
-## A Intro
+## A - Intro
 
-## B Installation
+## B - Installation
 
-## C Usage
+## C - Usage
