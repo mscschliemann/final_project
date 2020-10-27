@@ -1,5 +1,5 @@
 import cv2
-from yolo_hand import YOLO
+from classfiles.yolo_hand import YOLO
 
 class VideoCamera(object):
     def __init__(self):
@@ -38,4 +38,16 @@ class VideoCamera(object):
             cv2.putText(frame, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
         ret, jpeg = cv2.imencode('.jpg', frame)
+        return jpeg.tobytes()
+
+    def get_thresh_frame(self, rect):
+        rval, frame = self.video.read()
+        crop_img = frame[rect[0][0]:rect[1][0], rect[0][1]:rect[1][1]]
+        grey = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
+        # applying gaussian blur
+        value = (35, 35)
+        blurred = cv2.GaussianBlur(grey, value, 0)
+        # thresholdin: Otsu's Binarization method
+        _, thresh1 = cv2.threshold(blurred, 127, 255, cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
+        ret, jpeg = cv2.imencode('.jpg', thresh1)
         return jpeg.tobytes()

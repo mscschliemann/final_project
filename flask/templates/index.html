@@ -51,12 +51,12 @@ html, body, h1, h2, h3, h4, h5 {font-family: "Open Sans", sans-serif}
       <!-- Profile -->
       <div class="w3-card w3-round w3-white">
         <div class="w3-container">
-         <h4 class="w3-center">My Profile</h4>
-         <p class="w3-center"><img src="/w3images/avatar3.png" class="w3-circle" style="height:106px;width:106px" alt="Avatar"></p>
+         <h4 class="w3-center">Camera Position</h4>
+         <p class="w3-center"><img src="static/img/tempelhof.jpg" class="w3-circle" style="height:150px;width:150px" alt="Map"></p>
          <hr>
-         <p><i class="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i> Designer, UI</p>
-         <p><i class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> London, UK</p>
-         <p><i class="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i> April 1, 1988</p>
+         <p><i class="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i> Camera I</p>
+         <p><i class="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> Tempelhof, Berlin</p>
+         <p><i class="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i> Nov 2, 2020</p>
         </div>
       </div>
       <br>
@@ -154,7 +154,7 @@ html, body, h1, h2, h3, h4, h5 {font-family: "Open Sans", sans-serif}
         <h4>Video Streaming Demonstration</h4>
         <hr class="w3-clear">
         <div class="w3-center">
-            <img id="bg" src="static/img/Video_camera_icon.png" height="200px" width="200px">
+            <img id="bg" src="static/img/Video_camera_icon.png" height="300px" width="300px">
         </div>
         <p>Live Stream....</p>
         <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom" onclick="button_click(1);">  big</button> 
@@ -193,10 +193,10 @@ html, body, h1, h2, h3, h4, h5 {font-family: "Open Sans", sans-serif}
     <div class="w3-col m2">
         <div class="w3-card w3-round w3-white w3-center">
             <div class="w3-container">
-                <p>Upcoming Events:</p>
-                <img src="/w3images/forest.jpg" alt="Forest" style="width:100%;">
-                <p><strong>Holiday</strong></p>
-          <p>Friday 15:00</p>
+                <p>Threshold Box</p>
+                <img id="thresh" src="static/img/Video_camera_icon.png" alt="Threshold" style="width:100%;">
+                <!-- <p><strong>Holiday</strong></p>
+          <p>Friday 15:00</p> -->
           <p><button class="w3-button w3-block w3-theme-l4">Info</button></p>
         </div>
     </div>
@@ -273,13 +273,17 @@ function openNav() {
 
 function button_click(x){
   var img = document.getElementById("bg"); 
+  var thresh = document.getElementById("thresh");
   if (x == 5) {
     img.src="static/img/Video_camera_icon.png";
-    img.style.height = '200px';
-    img.style.width = '200px';
+    img.style.height = '300px';
+    img.style.width = '300px';
   } else {
+    img.src = '';
     img.src="/video_feed?m="+x;
-    console.log(x)
+    img.style.height = 'auto';
+    img.style.width = 'auto';
+    thresh.src="/video_feed_thresh";
   }
 }
 </script>
