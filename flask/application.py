@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, Response
 from camera import VideoCamera
+import threading
+import concurrent.futures
 
 app = Flask(__name__)
 
@@ -17,8 +19,16 @@ def gen_boxed(camera):
 @app.route('/video_feed')
 def video_feed():
     # model = request.args['m']
+    # with concurrent.futures.ThreadPoolExecutor() as executor1:
+    #     future = executor1.submit(gen_boxed, VideoCamera())
+    #     return_value = future.result()
+        #print(return_value)
+    # x = threading.Thread(target=thread_function, args=(1,))
+    # x.start()
     return Response(gen_boxed(VideoCamera()),
                 mimetype='multipart/x-mixed-replace; boundary=frame')
+    # return Response(return_value,
+    #             mimetype='multipart/x-mixed-replace; boundary=frame')
 
 
 def gen_thresh(camera):
@@ -29,8 +39,12 @@ def gen_thresh(camera):
 
 @app.route('/video_feed_thresh')
 def video_feed_thresh():
+    # with concurrent.futures.ThreadPoolExecutor() as executor2:
+    #     future = executor2.submit(gen_thresh, VideoCamera())
+    #     return_value = future.result()
     return Response(gen_thresh(VideoCamera()),
                 mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '__main__':
-    app.run(port=80, debug=True)
+    #app.run(port=80, debug=True, threaded=True)    
+    app.run(port=80, threaded=True)
