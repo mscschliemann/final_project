@@ -1,5 +1,6 @@
 import cv2
 from classfiles.yolo_hand import YOLO
+from opencv_convex_hull import cv_process
 
 class VideoCamera(object):
     def __init__(self):
@@ -51,3 +52,11 @@ class VideoCamera(object):
         _, thresh1 = cv2.threshold(blurred, 127, 255, cv2.THRESH_BINARY_INV+cv2.THRESH_OTSU)
         ret, jpeg = cv2.imencode('.jpg', thresh1)
         return jpeg.tobytes()
+
+    def get_game_frame(self, rect):
+        rval, frame = self.video.read()
+        img = cv_process(frame, rect)
+        ret, jpeg = cv2.imencode('.jpg', img)
+        return jpeg.tobytes()
+
+
