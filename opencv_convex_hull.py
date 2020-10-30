@@ -2,9 +2,11 @@ import cv2
 import numpy as np
 import math
 import time
+import random
 
 
 def cv_process(img, capture_rect, from_main):
+    global player_result, computer_result, get_value, win_result
     
     # get hand data from the rectangle sub window on the screen
     cv2.rectangle(img, capture_rect[0], capture_rect[1], (0, 255, 0), 5)
@@ -98,14 +100,25 @@ def cv_process(img, capture_rect, from_main):
     #cv2.imshow('Gesture', img)
     #now = datetime.datetime.now().second
     seconds = int((time.perf_counter() % 3) + 1)
-    finger = finger_count(count_defects)
-    text = stein_schere_papier(finger, hull_area, cnt_area, ratio_area)
-    cv2.putText(result_drawing, "Time: "+str(seconds), (50, 100), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
-    cv2.putText(result_drawing, "Hull: "+str(hull_area), (50, 130), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
-    cv2.putText(result_drawing, "CNT: "+str(cnt_area), (50, 160), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
-    cv2.putText(result_drawing, "Ratio: "+str(ratio_area), (50, 190), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
-    cv2.putText(result_drawing, "Finger: "+str(finger), (50, 220), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
-    cv2.putText(result_drawing, text, (50, 250), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
+    finger = 0
+    if seconds == 2:
+        get_value = True 
+    if seconds == 3 and get_value == True:
+        get_value = False
+        finger = finger_count(count_defects)
+        player_result = stein_schere_papier(finger, hull_area, cnt_area, ratio_area)
+        computer_result = random.choice(["Papier", "Schere", "Stein"])
+        win_result = get_winner(player_result, computer_result)
+    cv2.putText(result_drawing, win_result, (90, 160), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,0,255))
+    cv2.putText(result_drawing, player_result, (50, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
+    cv2.putText(result_drawing, computer_result, (150, 110), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
+    cv2.putText(result_drawing, "COMPUTER", (150, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
+    cv2.putText(result_drawing, "YOU", (50, 90), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
+    cv2.putText(result_drawing, str(seconds), (120, 60), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,0,255))
+    cv2.putText(result_drawing, "Hull: "+str(hull_area), (50, 210), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255,255,255))
+    cv2.putText(result_drawing, "CNT: "+str(cnt_area), (50, 230), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255,255,255))
+    cv2.putText(result_drawing, "Ratio: "+str(ratio_area), (50, 250), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255,255,255))
+    cv2.putText(result_drawing, "Finger: "+str(finger), (50, 270), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255,255,255))
 
     if from_main:
         all_img = np.hstack((drawing, result_drawing))
@@ -136,10 +149,24 @@ def stein_schere_papier(finger, hull, cnt, ratio):
         text = "Papier"
     return text
 
+def get_winner(player_result, computer_result):
+    mat = {"Stein": 1, "Schere": 2, "Papier": 3}
+    if player_result == computer_result:
+        text = "Aiko Deshou.."
+    elif mat[player_result]-mat[computer_result] == 1 or mat[player_result]-mat[computer_result] == -2:
+        text = "You LOOSE!!"
+    else:
+        text = "You WIN!!"
+    return text
+
 if __name__ == "__main__":
 
     cap = cv2.VideoCapture(0)
     capture_rect = ((100, 100), (400, 400))
+    player_result = ""
+    computer_result = ""
+    win_result = ""
+    get_value = True
 
     while(cap.isOpened()):
         # read image
