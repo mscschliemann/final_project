@@ -38,7 +38,7 @@ yolo.size = int(args.size)
 yolo.confidence = float(args.confidence)
 
 print("starting webcam...")
-cv2.namedWindow("preview")
+#cv2.namedWindow("preview")
 vc = cv2.VideoCapture(0)
 vid_writer = cv2.VideoWriter('outputFile.avi', cv2.VideoWriter_fourcc('M','J','P','G'), 30, (round(vc.get(cv2.CAP_PROP_FRAME_WIDTH)),round(vc.get(cv2.CAP_PROP_FRAME_HEIGHT))))
 crop_frame = None
@@ -51,25 +51,33 @@ else:
 while rval:
     width, height, inference_time, results = yolo.inference(frame)
     rects = []
+    rect = None
     for detection in results:
         id, name, confidence, x, y, w, h = detection
         cx = x + (w / 2)
         cy = y + (h / 2)
 
         # draw a bounding box rectangle and label on the image
+        scale_factor = 1.5
+        width_delta = int(w*((1-scale_factor)/2))
+        hight_delta = int(w*((1-scale_factor)/2))
+        x_neu = abs(x+width_delta)
+        y_neu = abs(y+hight_delta)
         color = (0, 255, 255)
         cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
         text = "%s (%s)" % (name, round(confidence, 2))
         cv2.putText(frame, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
-        rect = ((abs(y),abs(x)), (int((y+h)*1.2),int((x+w)*1.2)))
-        rects.append(rect)
-        #print(rect)
+        rect = ((x_neu, y_neu), (x_neu+w-2*width_delta, y+h-hight_delta))
+        cv2.rectangle(frame, rect[0], rect[1], (0,0,0),2)
+        #rects.append(rect)
 
-    if rects != []:
-        for i, rect in enumerate(rects):
-            cv_process(frame, rect, i)
-    cv2.imshow("preview", frame)
-    vid_writer.write(frame.astype(np.uint8))
+    # if rects != []:
+    #     for i, rectthon in enumerate(rects):
+    #         cv_process(frame, rect, i)
+    if rect is not None:
+        cv_process(frame, rect, False)
+    #cv2.imshow("preview", frame)
+    #vid_writer.write(frame.astype(np.uint8))
 
     rval, frame = vc.read()
 
